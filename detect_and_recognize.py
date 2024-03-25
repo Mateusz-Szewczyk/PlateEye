@@ -75,12 +75,17 @@ def detect_number_plates(image, model, display=False):
         return []
 
 
+def create_image_dir(uploaded_file):
+    # TODO stworz funkcje ktora tworzy i zapisuje obrazy, w parametrach przyjmuje pobrany obraz oraz number_plates_list
+    # TODO zapisuje obrazy w folderze uploaded-file-data/uploads/image_name
+    pass
+
 def recognize_number_plates(image_or_path, reader,
-                            number_plate_list, write_to_csv=False):
+                            number_plate_list, write_to_csv=True):
     start = time.time()
+    image_or_path = str(image_or_path)
     # if the image is a path, load the image; otherwise, use the image
-    image = cv2.imread(image_or_path) if isinstance(image_or_path, str) \
-        else image_or_path
+    image = cv2.imread(image_or_path) if isinstance(image_or_path, str) else image_or_path
 
     for i, box in enumerate(number_plate_list):
         # crop the number plate region
@@ -95,29 +100,34 @@ def recognize_number_plates(image_or_path, reader,
         else:
             # set the `text` variable to the detected text
             text = str(detection[0][1])
-
         # update the `number_plate_list` list, adding the detected text
         number_plate_list[i].append(text)
 
     if write_to_csv:
         # open the CSV file
-        csv_file = open("number_plates.csv", "w")
-        # create a writer object
-        csv_writer = csv.writer(csv_file)
-        # write the header
-        csv_writer.writerow(["image_path", "box", "text"])
+        uploaded_file_data = "uploaded-file-data"
+        upload_image_path = os.path.join(uploaded_file_data, "uploads")
+        csv_path = os.path.join(uploaded_file_data, "number_plates.csv")
 
-        # loop over the `number_plate_list` list
-        for box, text in number_plate_list:
-            # write the image path, bounding box coordinates,
-            # and detected text to the CSV file
-            csv_writer.writerow([image_or_path, box, text])
-        # close the CSV file
-        csv_file.close()
+        if not os.path.exists(upload_image_path):
+            os.makedirs(upload_image_path)
 
-    end = time.time()
-    # show the time it took to recognize the number plates
-    print(f"Time to recognize the number plates: {(end - start) * 1000:.0f} milliseconds")
+        # save the image with the detected number plates
+
+        if not os.path.isfile(csv_path):
+            with open(csv_path, "w") as csv_file:
+                csv_writer = csv.writer(csv_file)
+                csv_writer.writerow(["image", "bbox", "text"])
+
+        with open(csv_path, "a") as csv_file:
+            # create a writer object
+            csv_writer = csv.writer(csv_file)
+            # write the header
+            # loop over the `number_plate_list` list
+            for i, (box, text) in enumerate(number_plate_list):
+                # write the image path, bounding box coordinates,
+                # and detected text to the CSV file
+                csv_writer.writerow([image_or_path, box, text])
 
     return number_plate_list
 
