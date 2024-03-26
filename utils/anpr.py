@@ -1,12 +1,8 @@
-from ultralytics import YOLO
-from easyocr import Reader
 import time
-import torch
 import cv2
-import os
-import csv
-from typing import List
-
+import torch
+from easyocr import Reader
+from ultralytics import YOLO
 from utils.image_processing import preprocess_image_for_ocr
 from utils.saving import write_to_csv_file
 
@@ -122,7 +118,16 @@ def recognize_number_plates(image_or_path,
     number_plates_img_list = []
     for i, box in enumerate(number_plate_list):
         # crop the number plate region
-        np_image = image[box[0][1]-10:box[0][3]+10, box[0][0]-10:box[0][2]+10]
+        xmin, ymin, xmax, ymax = box[i]
+
+        # Expand the box by 20 pixels in every dimension
+        xmin_expanded = max(0, xmin - 20)
+        ymin_expanded = max(0, ymin - 20)
+        xmax_expanded = min(image.shape[1], xmax + 20)
+        ymax_expanded = min(image.shape[0], ymax + 20)
+
+        # Crop the number plate region using the expanded box
+        np_image = image[ymin_expanded:ymax_expanded, xmin_expanded:xmax_expanded]
         number_plates_img_list.append(np_image)
         # detect the text from the license plate using the EasyOCR reader
         detection = reader.readtext(np_image, paragraph=True)
@@ -134,7 +139,6 @@ def recognize_number_plates(image_or_path,
             # set the `text` variable to the detected text
             text = str(detection[0][1])
         # update the `number_plate_list` list, adding the detected text
-        # TODO Process the text to remove unwanted characters
         text = process_text(text)
         number_plate_list[i].append(text)
 
@@ -145,8 +149,7 @@ def recognize_number_plates(image_or_path,
 
 
 def process_text(text: str) -> str:
-    remove_chars = ["'", '"', ":", ";", "!", "?", ".", ",", " ", "|", "*", "#", "$", "%", "&", "(", ")", "[", "]", "{", "}", "<", ">", "+", "-", "_", "=", "/"]
+    remove_chars = ["@", "'", '"', ":", ";", "!", "?", ".", ",", " ", "|", "*", "#", "$", "%", "&", "(", ")", "[", "]", "{", "}", "<", ">", "+", "-", "_", "=", "/"]
     for char in remove_chars:
         text = text.replace(char, "")
     return text
-
