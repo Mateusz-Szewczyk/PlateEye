@@ -9,7 +9,7 @@ from utils.database_driver import add_number_plate_data
 from utils.login_and_register import log_and_reg
 import utils.login_and_register
 
-st.set_page_config(page_title="PlateEye", page_icon="🚗", layout="wide")
+st.set_page_config(page_title="Add Comment", page_icon="📝", layout="wide")
 st.title("PlateEye - Number Plate Detection and Recognition :car:")
 
 log_and_reg()

@@ -12,6 +12,8 @@ from utils.pages_manager import show_all_pages
 
 yaml_file = 'utils/auth.yaml'
 
+# TODO Prevent logging out after refreshing the page
+
 def save_config(config):
     try:
         with open(yaml_file, 'w') as file:
