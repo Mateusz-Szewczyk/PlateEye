@@ -2,7 +2,7 @@ import os
 import cv2
 import streamlit as st
 
-from utils.anpr import detect_number_plates, recognize_number_plates, model
+from utils.anpr import detect_number_plates, recognize_number_plates, model_and_reader
 from utils.image_processing import prepare_images
 from utils.saving import create_image_dir
 
@@ -16,7 +16,7 @@ if uploaded_file is not None:
     image_dir = create_image_dir(uploaded_file)
 
     with st.spinner("In progress..."):
-        model = model()
+        model, reader = model_and_reader()
         image, image_copy = prepare_images(uploaded_file, image_dir)
 
         col1, col2, col3 = st.columns(3)
@@ -30,7 +30,7 @@ if uploaded_file is not None:
             with col2:
                 st.subheader("Number Plate Detected Image")
                 st.image(image)
-            bbox_and_number_plate_list, number_plates_img_list = recognize_number_plates(os.path.join(image_dir, uploaded_file.name), bounding_boxes_list)
+            bbox_and_number_plate_list, number_plates_img_list = recognize_number_plates(os.path.join(image_dir, uploaded_file.name), reader, bounding_boxes_list)
             with col3:
                 st.subheader("Processed Image")
                 for i in range(min(4, len(number_plates_img_list))):
