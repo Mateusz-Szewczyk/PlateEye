@@ -2,11 +2,11 @@ import csv
 import os
 
 
-def create_image_dir(uploaded_file):
+def create_image_dir(uploaded_file, username):
     file_name = uploaded_file.name
     uploaded_file_path = "uploaded-file-data/uploads"
     csv_path = os.path.join(uploaded_file_path, "number_plates.csv")
-    image_dir = os.path.join(uploaded_file_path, file_name.split(".")[0])
+    image_dir = os.path.join(uploaded_file_path, username)
     if not os.path.exists(image_dir):
         os.makedirs(image_dir)
     if not os.path.exists(uploaded_file_path):

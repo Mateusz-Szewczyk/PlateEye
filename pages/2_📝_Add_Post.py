@@ -5,21 +5,20 @@ import streamlit as st
 from utils.anpr import detect_number_plates, recognize_number_plates, model_and_reader
 from utils.image_processing import prepare_images
 from utils.saving import create_image_dir
-from utils.database_driver import add_number_plate_data
+from utils.database_driver import add_post
 from utils.login_and_register import log_and_reg
 import utils.login_and_register
 
 st.set_page_config(page_title="Add Comment", page_icon="📝", layout="wide")
 st.title("PlateEye - Number Plate Detection and Recognition :car:")
 
-log_and_reg()
+config, authenticator, name, authentication_status, username = log_and_reg()
 
 st.markdown("---")
-
 uploaded_file = st.file_uploader("Upload an Image", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    image_dir = create_image_dir(uploaded_file)
+    image_dir = create_image_dir(uploaded_file, username)
 
     with st.spinner("In progress..."):
         model, reader = model_and_reader()
@@ -51,7 +50,14 @@ if uploaded_file is not None:
                 # Save the cropped number plate with the text as the filename
                 # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-                cv2.imwrite(os.path.join(image_dir, f"text_{text}.{uploaded_file.name.split('.')[1]}"), cropped_number_plate)
+                cv2.imwrite(os.path.join(image_dir, f"{text}.{uploaded_file.name.split('.')[1]}"), cropped_number_plate)
+                image_path = os.path.join(image_dir, f"{text}.{uploaded_file.name.split('.')[1]}")
+                with st.form("add_number_plate_data"):
+                    number_plate = st.text_input("Enter the number plate", value=text)
+                    content = st.text_area("Add a comment")
+                    if st.form_submit_button(":green: Post"):
+                        add_post(username, content, box, number_plate, image_path)
+                        st.success("Number plate data added successfully!")
         else:
             st.error("No number plates detected in the image. Please try with another image.")
 

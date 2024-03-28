@@ -83,7 +83,7 @@ def hash_plaintext_passwords(config):
 def log_and_reg():
     config = load_config()
     st.session_state.setdefault('failed_login_attempts', 0)
-    st.session_state.setdefault('welcome_message', True)
+    st.session_state['welcome_message'] = True
     if 'hashed_done' not in st.session_state:
         config = hash_plaintext_passwords(config)
         save_config(config)
@@ -96,14 +96,15 @@ def log_and_reg():
         config['cookie']['expiry_days'],
         config['preauthorized']
     )
-
+    if st.session_state.get('authentication_status') is None:
+        st.sidebar.page_link("1_Main.py", label="◼️ Main Page")
     name, authentication_status, username = authenticator.login('sidebar')
     if authentication_status:
         show_all_pages()
         st.sidebar.markdown('---')
         # If the user is authenticated
-        if st.session_state.get('welcome_message'):
-            st.sidebar.success(f'\n\nWelcome *{name}*')
+        if st.session_state['welcome_message']:
+            st.sidebar.success(f'\n\nLogged in as, *{name}*')
             st.sidebar.markdown('---')
             st.session_state.welcome_message = False
         authenticator.logout('Logout', 'sidebar', key='unique_key')
