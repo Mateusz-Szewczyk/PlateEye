@@ -2,12 +2,14 @@ import os
 import cv2
 import streamlit as st
 
-from utils.anpr import detect_number_plates, recognize_number_plates, model
+from utils.anpr import detect_number_plates, recognize_number_plates, model_and_reader
 from utils.image_processing import prepare_images
 from utils.saving import create_image_dir
+from utils.database_driver import add_number_plate_data
 
 st.set_page_config(page_title="PlateEye", page_icon="🚗", layout="wide")
 st.title("PlateEye - Number Plate Detection and Recognition :car:")
+st.sidebar.success("Select a demo above.")
 st.markdown("---")
 
 uploaded_file = st.file_uploader("Upload an Image", type=["jpg", "jpeg", "png"])
@@ -16,7 +18,7 @@ if uploaded_file is not None:
     image_dir = create_image_dir(uploaded_file)
 
     with st.spinner("In progress..."):
-        model = model()
+        model, reader = model_and_reader()
         image, image_copy = prepare_images(uploaded_file, image_dir)
 
         col1, col2, col3 = st.columns(3)
@@ -30,7 +32,7 @@ if uploaded_file is not None:
             with col2:
                 st.subheader("Number Plate Detected Image")
                 st.image(image)
-            bbox_and_number_plate_list, number_plates_img_list = recognize_number_plates(os.path.join(image_dir, uploaded_file.name), bounding_boxes_list)
+            bbox_and_number_plate_list, number_plates_img_list = recognize_number_plates(os.path.join(image_dir, uploaded_file.name), reader, bounding_boxes_list)
             with col3:
                 st.subheader("Processed Image")
                 for i in range(min(4, len(number_plates_img_list))):
@@ -48,5 +50,12 @@ if uploaded_file is not None:
                 cv2.imwrite(os.path.join(image_dir, f"text_{text}.{uploaded_file.name.split('.')[1]}"), cropped_number_plate)
         else:
             st.error("No number plates detected in the image. Please try with another image.")
+
 else:
     st.info("Please upload an image file to get started")
+
+
+# TODO Zmien layout i dodaj przyciski do dodawania do bazy danych
+# TODO Dodaj ekran logowania
+# TODO Dodaj strone glowna ktora wyswietla ostatnio dodane zapisy
+# TODO Dodaj na glownej stronie mozliwosc wyszukiwania po numerze rejestracyjnym
