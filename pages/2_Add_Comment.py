@@ -6,10 +6,12 @@ from utils.anpr import detect_number_plates, recognize_number_plates, model_and_
 from utils.image_processing import prepare_images
 from utils.saving import create_image_dir
 from utils.database_driver import add_number_plate_data
+from utils.login_and_register import log_and_reg
+import utils.login_and_register
 
 st.set_page_config(page_title="PlateEye", page_icon="🚗", layout="wide")
 st.title("PlateEye - Number Plate Detection and Recognition :car:")
-st.sidebar.success("Select a demo above.")
+log_and_reg()
 st.markdown("---")
 
 uploaded_file = st.file_uploader("Upload an Image", type=["jpg", "jpeg", "png"])
