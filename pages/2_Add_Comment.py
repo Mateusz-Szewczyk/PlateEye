@@ -11,7 +11,9 @@ import utils.login_and_register
 
 st.set_page_config(page_title="PlateEye", page_icon="🚗", layout="wide")
 st.title("PlateEye - Number Plate Detection and Recognition :car:")
+
 log_and_reg()
+
 st.markdown("---")
 
 uploaded_file = st.file_uploader("Upload an Image", type=["jpg", "jpeg", "png"])

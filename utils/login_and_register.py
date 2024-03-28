@@ -1,13 +1,16 @@
-import streamlit as st
-import streamlit_authenticator as stauth
 import yaml
 from yaml.loader import SafeLoader
 import smtplib
+from pathlib import Path
 from email.message import EmailMessage
+
+import streamlit as st
+import streamlit_authenticator as stauth
 from streamlit_authenticator.utilities.hasher import Hasher
 
-yaml_file = 'utils/auth.yaml'
+from utils.pages_manager import show_all_pages
 
+yaml_file = 'utils/auth.yaml'
 
 def save_config(config):
     try:
@@ -93,14 +96,16 @@ def log_and_reg():
     )
 
     name, authentication_status, username = authenticator.login('sidebar')
-
     if authentication_status:
+        show_all_pages()
+        st.sidebar.markdown('---')
         # If the user is authenticated
         if st.session_state.get('welcome_message'):
             st.sidebar.success(f'\n\nWelcome *{name}*')
             st.sidebar.markdown('---')
             st.session_state.welcome_message = False
         authenticator.logout('Logout', 'sidebar', key='unique_key')
+        st.session_state.failed_login_attempts = 0
     else:
         if st.session_state.get("authentication_status") is False:
             st.session_state.failed_login_attempts += 1
@@ -151,9 +156,3 @@ def log_and_reg():
 
     return config, authenticator, name, authentication_status, username
 
-
-if __name__ == "__main__":
-    if 'hashed_done' not in st.session_state:
-        config = hash_plaintext_passwords(config)
-        save_config(config)
-        st.session_state.hashed_done = True
