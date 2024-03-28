@@ -5,7 +5,7 @@ from skimage.transform import rotate
 from deskew import determine_skew
 
 
-def prepare_images(uploaded_file, image_dir):
+def prepare_images(image_path):
     """
     Prepares the uploaded image for processing.
 
@@ -18,14 +18,14 @@ def prepare_images(uploaded_file, image_dir):
             - image_copy: A copy of the uploaded image.
             - image: The uploaded image in RGB format.
     """
-    image_path = os.path.join(image_dir, uploaded_file.name)
     # Load the image
-    image = cv2.imread(image_path)
+    image = cv2.imread(image_path, cv2.IMREAD_COLOR)
     if image is None:
         raise FileNotFoundError(f"Failed to load image at path: {image_path}")
     # Convert image to RGB format
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image_copy = image.copy()
+    print(type(image))
     return image_copy, image
 
 
@@ -37,28 +37,12 @@ def preprocess_image_for_ocr(image):
     # deskewed_image = deskew(thresholded_image)
     return thresholded_image
 
-# def deskew(image):
-#     coords = np.column_stack(np.where(image > 0))
-#     angle = cv2.minAreaRect(coords)[-1]
-#
-#     # Additional angle adjustment based on image content
-#     if angle < -45:
-#         angle = -(90 + angle)
-#     else:
-#         angle = -angle
-#
-#     # Visualize the angle to debug
-#     print("Rotation angle:", angle)
-#
-#     (h, w) = image.shape[:2]
-#     center = (w // 2, h // 2)
-#     M = cv2.getRotationMatrix2D(center, angle, 1.0)
-#     rotated = cv2.warpAffine(image, M, (w, h),
-#                              flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
-#     return rotated
 
 def remove_noise(image):
+    print(type(image))
+    # Apply denoising
     return cv2.fastNlMeansDenoisingColored(image, None, 10, 10, 7, 15)
+
 
 def thresholding(image):
     return cv2.threshold(image, 127, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]

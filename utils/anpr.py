@@ -113,7 +113,8 @@ def recognize_number_plates(image_or_path,
     start = time.time()
     image_or_path = str(image_or_path)
     # if the image is a path, load the image; otherwise, use the image
-    image = cv2.imread(image_or_path) if isinstance(image_or_path, str) else image_or_path
+    image = cv2.imread(image_or_path, cv2.IMREAD_COLOR) if isinstance(image_or_path, str) else image_or_path
+    print(f"anpr, image dtype: {type(image)}")
     image = preprocess_image_for_ocr(image)
     number_plates_img_list = []
     for i, box in enumerate(number_plate_list):

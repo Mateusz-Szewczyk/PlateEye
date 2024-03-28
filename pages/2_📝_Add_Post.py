@@ -1,6 +1,7 @@
 import os
 import cv2
 import streamlit as st
+from datetime import datetime
 
 from utils.anpr import detect_number_plates, recognize_number_plates, model_and_reader
 from utils.image_processing import prepare_images
@@ -18,12 +19,12 @@ st.markdown("---")
 uploaded_file = st.file_uploader("Upload an Image", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    image_dir = create_image_dir(uploaded_file, username)
+    image_dir, image_path = create_image_dir(uploaded_file, username)
 
     with st.spinner("In progress..."):
         model, reader = model_and_reader()
-        image, image_copy = prepare_images(uploaded_file, image_dir)
-
+        image, image_copy = prepare_images(image_path)
+        print(type(image))
         col1, col2, col3 = st.columns(3)
 
         with col1:
@@ -35,12 +36,14 @@ if uploaded_file is not None:
             with col2:
                 st.subheader("Number Plate Detected Image")
                 st.image(image)
-            bbox_and_number_plate_list, number_plates_img_list = recognize_number_plates(os.path.join(image_dir, uploaded_file.name), reader, bounding_boxes_list)
+            bbox_and_number_plate_list, number_plates_img_list = recognize_number_plates(image_path, reader, bounding_boxes_list)
             with col3:
                 st.subheader("Processed Image")
                 for i in range(min(4, len(number_plates_img_list))):
                     st.image(number_plates_img_list[i])
             for i, (box, text) in enumerate(bbox_and_number_plate_list):
+                box = box
+                text = text
                 cropped_number_plate = image_copy[box[1]:box[3], box[0]:box[2]]
                 cv2.rectangle(image, (box[0], box[1]), (box[2], box[3]), (0, 255, 0), 2)
                 cv2.putText(image, text, (box[0], box[3] + 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
@@ -50,14 +53,15 @@ if uploaded_file is not None:
                 # Save the cropped number plate with the text as the filename
                 # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-                cv2.imwrite(os.path.join(image_dir, f"{text}.{uploaded_file.name.split('.')[1]}"), cropped_number_plate)
+                cv2.imwrite(os.path.join(image_dir, f"{text}.{uploaded_file.name.split('.')[1]}"), image)
                 image_path = os.path.join(image_dir, f"{text}.{uploaded_file.name.split('.')[1]}")
-                with st.form("add_number_plate_data"):
-                    number_plate = st.text_input("Enter the number plate", value=text)
-                    content = st.text_area("Add a comment")
-                    if st.form_submit_button(":green: Post"):
-                        add_post(username, content, box, number_plate, image_path)
-                        st.success("Number plate data added successfully!")
+            with st.form("add_number_plate_data"):
+                date = image_path.split(".")[0]
+                number_plate = st.text_input("Enter the number plate", value=text)
+                content = st.text_area("Add a comment")
+                if st.form_submit_button("Post"):
+                    add_post(username, content, box, number_plate, image_path, date)
+                    st.success("Number plate data added successfully!")
         else:
             st.error("No number plates detected in the image. Please try with another image.")
 

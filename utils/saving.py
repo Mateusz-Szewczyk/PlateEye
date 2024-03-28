@@ -1,19 +1,17 @@
 import csv
 import os
-
+from datetime import datetime
 
 def create_image_dir(uploaded_file, username):
-    file_name = uploaded_file.name
+    date = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     uploaded_file_path = "uploaded-file-data/uploads"
-    csv_path = os.path.join(uploaded_file_path, "number_plates.csv")
     image_dir = os.path.join(uploaded_file_path, username)
+    image_path = os.path.join(image_dir, f'{date}.{uploaded_file.name.split(".")[1]}')
     if not os.path.exists(image_dir):
         os.makedirs(image_dir)
-    if not os.path.exists(uploaded_file_path):
-        os.makedirs(uploaded_file_path)
-    with open(os.path.join(image_dir, file_name, ), "wb") as file:
-        file.write(uploaded_file.getbuffer())
-    return image_dir
+    with open(os.path.join(image_path), "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    return image_dir, image_path
 
 
 def write_to_csv_file(image_or_path, number_plate_list):
