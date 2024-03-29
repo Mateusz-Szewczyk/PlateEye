@@ -25,7 +25,6 @@ def prepare_images(image_path):
     # Convert image to RGB format
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image_copy = image.copy()
-    print(type(image))
     return image_copy, image
 
 
@@ -39,7 +38,6 @@ def preprocess_image_for_ocr(image):
 
 
 def remove_noise(image):
-    print(type(image))
     # Apply denoising
     return cv2.fastNlMeansDenoisingColored(image, None, 10, 10, 7, 15)
 

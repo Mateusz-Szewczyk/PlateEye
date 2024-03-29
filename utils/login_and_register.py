@@ -159,3 +159,6 @@ def log_and_reg():
 
     return config, authenticator, name, authentication_status, username
 
+
+
+# TODO wyslij email potwierdzajacy rejestracje

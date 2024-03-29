@@ -51,7 +51,7 @@ if uploaded_file is not None:
                 st.image(cropped_number_plate)
                 st.success(f"Number plate: **{text}**, detected and recognized successfully!")
                 # Save the cropped number plate with the text as the filename
-                # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+                image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
                 cv2.imwrite(os.path.join(image_dir, f"{text}.{uploaded_file.name.split('.')[1]}"), image)
                 image_path = os.path.join(image_dir, f"{text}.{uploaded_file.name.split('.')[1]}")

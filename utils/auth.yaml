@@ -12,10 +12,16 @@ credentials:
       password: $2b$12$/sVE7kWIHX.CZx93KXEP.Oflwdj9NN61B6ALxMR3fAD5FNvWRpcvq
     admin:
       email: mateusz.szewczyk000@gmail.com
-      failed_login_attempts: 1
+      failed_login_attempts: 3
       logged_in: false
       name: Mateusz Szewczyk
       password: $2b$12$GSlcdOu/cXo8a3PuPl3Q6eUnkgWHWavVmLmykDF31rBsuutyA4IVC
+    sylwusia:
+      email: sylwiaa097@gmail.com
+      failed_login_attempts: 1
+      logged_in: false
+      name: Sylwia Szewczyk
+      password: $2b$12$/glX3r8yC04XfmAMrWx/fuKpI1WnYia/UWI68dIlKkIAasOvekm3a
     user:
       email: user@gmail.com
       failed_login_attempts: 0

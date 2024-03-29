@@ -12,10 +12,12 @@ data = get_last_number_plate_data(5)
 print(data)
 for record in data:
     st.subheader(f"Added by: {record[0]}")
+
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.image(f"uploaded-file-data/test.jpg", caption="Number Plate Image")
+        st.image(f"{record[8]}", caption="Number Plate Image")
     with col2:
-        st.write("Column 2")
+        st.subheader("Comment")
+        st.write(f"{record[7]}")
     with col3:
-        st.write("Column 3")
+        st.write("Number plate: ", f"{record[2]}")
