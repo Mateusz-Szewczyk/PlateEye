@@ -163,3 +163,5 @@ def log_and_reg():
 
 
 # TODO wyslij email potwierdzajacy rejestracje
+# TODO dodaj jakąś walidację przy rejestracji logowaniu
+# TODO gdy poda się nieprawidłową nazwę użytkownika ale dobry email, to pokazuje się komunikat "invalid username" ale email dodaje się do bazy, do naprawy to

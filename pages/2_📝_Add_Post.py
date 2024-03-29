@@ -7,10 +7,11 @@ from utils.image_processing import prepare_images
 from utils.saving import create_image_dir
 from utils.database_driver import add_post
 from utils.login_and_register import log_and_reg
+from utils.styling import default_style
 
 st.set_page_config(page_title="Add Comment", page_icon="📝", layout="wide")
 st.title("PlateEye - Number Plate Detection and Recognition :car:")
-
+default_style()
 config, authenticator, name, authentication_status, username = log_and_reg()
 
 st.markdown("---")
