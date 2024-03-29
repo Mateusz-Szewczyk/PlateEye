@@ -19,3 +19,4 @@ numpy
 scikit-image
 deskew
 streamlit
+streamlit_authenticator

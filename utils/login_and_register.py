@@ -1,7 +1,6 @@
 import yaml
 from yaml.loader import SafeLoader
 import smtplib
-from pathlib import Path
 from email.message import EmailMessage
 
 import streamlit as st
