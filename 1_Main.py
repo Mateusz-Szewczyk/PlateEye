@@ -9,13 +9,15 @@ log_and_reg()
 
 data = get_last_number_plate_data(5)
 
-print(data)
 for record in data:
     st.subheader(f"Added by: {record[0]}")
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.image(f"{record[8]}", caption="Number Plate Image")
+        try:
+            st.image(f"{record[8]}", caption="Number Plate Image")
+        except:
+            st.image("./static/img-not-found.jpg", caption="Image not found")
     with col2:
         st.subheader("Comment")
         st.write(f"{record[7]}")

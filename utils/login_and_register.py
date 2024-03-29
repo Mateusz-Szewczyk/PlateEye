@@ -84,6 +84,8 @@ def log_and_reg():
     config = load_config()
     st.session_state.setdefault('failed_login_attempts', 0)
     st.session_state['welcome_message'] = True
+
+
     if 'hashed_done' not in st.session_state:
         config = hash_plaintext_passwords(config)
         save_config(config)
