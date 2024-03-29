@@ -20,3 +20,4 @@ scikit-image
 deskew
 streamlit
 streamlit_authenticator
+opencv-python-headless
