@@ -138,17 +138,14 @@ def log_and_reg():
             st.session_state["register_status"] = None
             if authenticator.register_user('sidebar', pre_authorization=False, clear_on_submit=True):
                 save_config(config)
-                st.session_state["register_status"] = True
-                if st.session_state['register_status']:
-                    new_names = list(config['credentials']['usernames'].keys())
-                    username = [i for i in new_names if i not in old_names]
-                    print(username, type(username))
-                    if username:
-                        name = config['credentials']['usernames'][username[0]]['name']
-                        email_adress = config['credentials']['usernames'][username[0]]['email']
-                        send_email_confirmation(name, username[0], email_adress, config)
+                new_names = list(config['credentials']['usernames'].keys())
+                username = [i for i in new_names if i not in old_names]
+                print(username, type(username))
+                if len(username) > 0:
+                    name = config['credentials']['usernames'][username[0]]['name']
+                    email_adress = config['credentials']['usernames'][username[0]]['email']
+                    send_email_confirmation(name, username[0], email_adress, config)
                     st.sidebar.success('User registered successfully, you can now log in')
-                    st.session_state['register_status'] = False
         except Exception as e:
             st.error(str(e))
 
