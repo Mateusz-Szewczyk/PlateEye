@@ -17,9 +17,12 @@ def add_post(username, content, bounding_box, number_plate, image_path, date):
         cur.execute(
             f"INSERT INTO posts (username, text, xmin, ymin, xmax, ymax, number_plate, image_path, post_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (username, content, xmin, ymin, xmax, ymax, number_plate, image_path, date))
+        con.commit()
+        return True
     except sqlite3.IntegrityError:
         st.error("Number plate already exists in the database!")
-    con.commit()
+        return False
+
 
 
 def get_last_number_plate_data(number: int = 10):

@@ -4,7 +4,6 @@ import torch
 from easyocr import Reader
 from ultralytics import YOLO
 from utils.image_processing import preprocess_image_for_ocr
-from utils.saving import write_to_csv_file
 
 CONFIDENCE_THRESHOLD = 0.4
 COLOR = (0, 255, 0)
@@ -95,8 +94,7 @@ def detect_number_plates(image, model, display=False):
 
 def recognize_number_plates(image_or_path,
                             reader,
-                            number_plate_list,
-                            write_to_csv=True):
+                            number_plate_list):
     """
     Recognizes the text from the detected number plates and optionally writes the results to a CSV file.
 
@@ -114,12 +112,12 @@ def recognize_number_plates(image_or_path,
     image_or_path = str(image_or_path)
     # if the image is a path, load the image; otherwise, use the image
     image = cv2.imread(image_or_path, cv2.IMREAD_COLOR) if isinstance(image_or_path, str) else image_or_path
-    print(f"anpr, image dtype: {type(image)}")
     image = preprocess_image_for_ocr(image)
     number_plates_img_list = []
+    text_list = []
     for i, box in enumerate(number_plate_list):
         # crop the number plate region
-        xmin, ymin, xmax, ymax = box[i]
+        xmin, ymin, xmax, ymax = box[0]
 
         # Expand the box by 20 pixels in every dimension
         xmin_expanded = max(0, xmin - 20)
@@ -141,12 +139,9 @@ def recognize_number_plates(image_or_path,
             text = str(detection[0][1])
         # update the `number_plate_list` list, adding the detected text
         text = process_text(text)
-        number_plate_list[i].append(text)
+        text_list.append(text)
 
-    if write_to_csv:
-       write_to_csv_file(image_or_path, number_plate_list)
-
-    return number_plate_list, number_plates_img_list
+    return text_list, number_plates_img_list
 
 
 def process_text(text: str) -> str:

@@ -1,6 +1,7 @@
 import yaml
 from yaml.loader import SafeLoader
 import smtplib
+from pathlib import Path
 from email.message import EmailMessage
 
 import streamlit as st
@@ -10,6 +11,7 @@ from streamlit_authenticator.utilities.hasher import Hasher
 from utils.pages_manager import show_all_pages
 
 yaml_file = 'utils/auth.yaml'
+
 
 # TODO Prevent logging out after refreshing the page
 
@@ -35,7 +37,6 @@ def is_bcrypt_hash(s):
     return any(s.startswith(prefix) and len(s) == 60 for prefix in bcrypt_prefixes)
 
 
-
 def send_email(subject, body, to_email, config):
     msg = EmailMessage()
     msg.set_content(body)
@@ -48,6 +49,24 @@ def send_email(subject, body, to_email, config):
             server.starttls()
         server.login(config['smtp']['username'], config['smtp']['password'])
         server.send_message(msg)
+
+
+def send_email_confirmation(name, username, to_email, config):
+    subject = "PlateEye - Registration Confirmation"
+    body = f"""
+            Hey {name}, 
+Thank you for registering with PlateEye! We're thrilled to have you join our community.
+Your registration details have been successfully received, and your account is now active. 
+Here's a quick summary of your registration information:
+
+    Username: {username}
+    Email Address: {to_email}
+
+            Best regards,
+            Eye Plate Website Team
+            """
+
+    send_email(subject, body, to_email, config)
 
 
 def send_reset_password_email(name, new_password, to_email, config):
@@ -83,8 +102,6 @@ def log_and_reg():
     config = load_config()
     st.session_state.setdefault('failed_login_attempts', 0)
     st.session_state['welcome_message'] = True
-
-
     if 'hashed_done' not in st.session_state:
         config = hash_plaintext_passwords(config)
         save_config(config)
@@ -97,6 +114,7 @@ def log_and_reg():
         config['cookie']['expiry_days'],
         config['preauthorized']
     )
+    old_names = list(config['credentials']['usernames'].keys())
     if st.session_state.get('authentication_status') is None:
         st.sidebar.page_link("1_Main.py", label="◼️ Main Page")
     name, authentication_status, username = authenticator.login('sidebar')
@@ -117,10 +135,20 @@ def log_and_reg():
 
         # Register User
         try:
-            if authenticator.register_user('sidebar', pre_authorization=False):
+            st.session_state["register_status"] = None
+            if authenticator.register_user('sidebar', pre_authorization=False, clear_on_submit=True):
                 save_config(config)
-                if st.session_state['authentication_status']:
-                    st.sidebar.success('User registered successfully')
+                st.session_state["register_status"] = True
+                if st.session_state['register_status']:
+                    new_names = list(config['credentials']['usernames'].keys())
+                    username = [i for i in new_names if i not in old_names]
+                    print(username, type(username))
+                    if username:
+                        name = config['credentials']['usernames'][username[0]]['name']
+                        email_adress = config['credentials']['usernames'][username[0]]['email']
+                        send_email_confirmation(name, username[0], email_adress, config)
+                    st.sidebar.success('User registered successfully, you can now log in')
+                    st.session_state['register_status'] = False
         except Exception as e:
             st.error(str(e))
 
@@ -143,12 +171,13 @@ def log_and_reg():
             except Exception as e:
                 st.sidebar.error(str(e))
 
-    # Forgot Username
+        # Forgot Username
         if st.session_state.failed_login_attempts >= 1:
             try:
                 username_forgot_username, email_forgot_username = authenticator.forgot_username('sidebar')
                 if username_forgot_username:
-                    user_name = config['credentials']['usernames'][username_forgot_username]['name']  # Retrieve the user's name from the config
+                    user_name = config['credentials']['usernames'][username_forgot_username][
+                        'name']  # Retrieve the user's name from the config
                     save_config(config)
                     # Send the email with the username
                     send_forgot_username_email(user_name, username_forgot_username, email_forgot_username, config)
@@ -160,8 +189,4 @@ def log_and_reg():
 
     return config, authenticator, name, authentication_status, username
 
-
-
 # TODO wyslij email potwierdzajacy rejestracje
-# TODO dodaj jakąś walidację przy rejestracji logowaniu
-# TODO gdy poda się nieprawidłową nazwę użytkownika ale dobry email, to pokazuje się komunikat "invalid username" ale email dodaje się do bazy, do naprawy to
