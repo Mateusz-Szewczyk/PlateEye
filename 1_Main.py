@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit_scrollable_textbox as stx
 
 from utils.login_and_register import log_and_reg
 from utils.database_driver import get_last_number_plate_data
@@ -23,7 +24,7 @@ for record in data:
                 with st.columns([1, 8, 1])[1]:
                     st.subheader(f"Added by: {record[0]}")
                     try:
-                        st.image(f"{record[8]}", caption="Number Plate Image", width=300)
+                        st.image(f"{record[8]}", caption="Number Plate Image", height=300)
                     except:
                         st.image("./static/img-not-found.jpg", caption="Image not found")
         with st.container():
@@ -33,7 +34,7 @@ for record in data:
                     if record[7] == "":
                         st.warning("No comment added")
                     else:
-                        st.write(f"{record[7]}")
+                        stx.scrollableTextbox(record[7], height=300, border=False)
 
         with st.container():
             with col3:
