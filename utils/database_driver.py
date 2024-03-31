@@ -1,12 +1,13 @@
 import sqlite3
 import streamlit as st
 
+
 def get_connection():
     return sqlite3.connect('./uploaded-file-data/database.db')
 
+
 def get_cursor(con):
     return con.cursor()
-
 
 
 def add_post(username, content, bounding_box, number_plate, image_path, date):
@@ -22,7 +23,6 @@ def add_post(username, content, bounding_box, number_plate, image_path, date):
     except sqlite3.IntegrityError:
         st.error("Number plate already exists in the database!")
         return False
-
 
 
 def get_last_number_plate_data(number: int = 10):

@@ -9,6 +9,7 @@ from utils.database_driver import add_post
 from utils.login_and_register import log_and_reg
 from utils.styling import default_style
 
+
 st.set_page_config(page_title="Add Comment", page_icon="📝", layout="wide")
 st.title("PlateEye - Number Plate Detection and Recognition :car:")
 default_style()
@@ -35,7 +36,7 @@ if uploaded_file is not None:
                 st.subheader("Number Plate Detected Image")
                 st.image(image)
             text_list, number_plates_img_list = recognize_number_plates(image_path, reader,
-                                                                                         bounding_boxes_list)
+                                                                        bounding_boxes_list)
             with col3:
                 st.subheader("Processed Image")
                 for i in range(min(4, len(number_plates_img_list))):
@@ -55,15 +56,12 @@ if uploaded_file is not None:
 
             uploaded_file = None
             with st.form("add_number_plate_data"):
-                date = image_path.split(".")[0]
+                date = image_path.split(".")[0].split("/")[-1]
                 number_plate = st.text_input("Enter the number plate", value=text)
-                content = st.text_area("Add a comment")
-
-                def add_record():
+                content = st.text_area("Add a comment", max_chars=500, height=100)
+                if st.form_submit_button("Post"):
                     if add_post(username, content, box, number_plate, image_text_path, date):
                         st.success("Number plate data added successfully!")
-
-                st.form_submit_button("Post", on_click=add_record)
         else:
             st.error("No number plates detected in the image. Please try with another image.")
 else:

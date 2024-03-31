@@ -14,7 +14,7 @@ with col2:
         st.image("./static/plateeye-logo.png", width=250)
 log_and_reg()
 data = get_last_number_plate_data(5)
-
+print(data)
 for record in data:
     with st.container(border=True):
         col1, col2, col3 = st.columns(3, gap="medium")
@@ -27,15 +27,12 @@ for record in data:
                     except:
                         st.image("./static/img-not-found.jpg", caption="Image not found")
         with st.container():
-            if record[7] == "":
-                with col2:
-                    with st.columns([1, 8, 2])[1]:
-                        st.subheader("Comment")
+            with col2:
+                with st.columns([1, 8, 2])[1]:
+                    st.subheader("Comment")
+                    if record[7] == "":
                         st.warning("No comment added")
-            else:
-                with col2:
-                    with st.columns([1, 8, 2])[1]:
-                        st.subheader("Comment")
+                    else:
                         st.write(f"{record[7]}")
 
         with st.container():

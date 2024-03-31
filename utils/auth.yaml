@@ -18,9 +18,10 @@ credentials:
       password: $2b$12$GSlcdOu/cXo8a3PuPl3Q6eUnkgWHWavVmLmykDF31rBsuutyA4IVC
     mateusz:
       email: mrinczox@gmail.com
+      failed_login_attempts: 0
       logged_in: false
       name: Mateusz
-      password: $2b$12$YuFghBZACgBDbESsYagaOeTYgtmYjukTqEZKemIqH5iirGo1mutA6
+      password: $2b$12$/RLC9K4qvsj6ENk3Xw2Hv.x3yXZub6mgtkHhlWsZDaa7QNuBS2vY.
     sylwusia:
       email: sylwiaa097@gmail.com
       failed_login_attempts: 1
