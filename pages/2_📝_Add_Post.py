@@ -9,7 +9,6 @@ from utils.database_driver import add_post
 from utils.login_and_register import log_and_reg
 from utils.styling import default_style
 
-
 st.set_page_config(page_title="Add Comment", page_icon="📝", layout="wide")
 st.title("PlateEye - Number Plate Detection and Recognition :car:")
 default_style()
@@ -17,7 +16,14 @@ config, authenticator, name, authentication_status, username = log_and_reg()
 
 st.markdown("---")
 
-uploaded_file = st.file_uploader("Upload an Image", type=["jpg", "jpeg", "png"])
+
+@st.cache()
+def get_image():
+    return st.file_uploader("Upload an Image", type=["jpg", "jpeg", "png"])
+
+
+uploaded_file = get_image()
+
 if uploaded_file is not None:
     image_dir, image_path = create_image_dir(uploaded_file, username)
 
