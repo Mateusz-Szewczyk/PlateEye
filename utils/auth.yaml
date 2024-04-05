@@ -16,6 +16,12 @@ credentials:
       logged_in: false
       name: Mateusz Szewczyk
       password: $2b$12$GSlcdOu/cXo8a3PuPl3Q6eUnkgWHWavVmLmykDF31rBsuutyA4IVC
+    mateusz:
+      email: mrinczox@gmail.com
+      failed_login_attempts: 0
+      logged_in: false
+      name: mateusz
+      password: $2b$12$jCiFhFDcxoHQ0.XCGiQfH.kO5PFqyFJ4X5TL3LjAm522jwyQ5kh.W
     sylwusia:
       email: sylwiaa097@gmail.com
       failed_login_attempts: 1

@@ -127,12 +127,11 @@ def log_and_reg():
         st.markdown('---')
 
         # Forgot Password
-        if st.session_state.failed_login_attempts >= 1:
+        if st.session_state.failed_login_attempts > 0:
             try:
                 username_forgot_pw, email_forgot_password, random_password = authenticator.forgot_password('sidebar')
                 if username_forgot_pw:
-                    user_name = config['credentials']['usernames'][username_forgot_pw][
-                        'name']  # Assuming you store the name in the config
+                    user_name = config['credentials']['usernames'][username_forgot_pw]['name']
                     save_config(config)
                     # Send the reset password email
                     send_reset_password_email(user_name, random_password, email_forgot_password, config)
@@ -148,7 +147,7 @@ def log_and_reg():
             try:
                 username_forgot_username, email_forgot_username = authenticator.forgot_username('sidebar')
                 if username_forgot_username:
-                    user_name = config['credentials']['usernames'][username_forgot_username]['name']  # Retrieve the user's name from the config
+                    user_name = config['credentials']['usernames'][username_forgot_username]['name']
                     save_config(config)
                     # Send the email with the username
                     send_forgot_username_email(user_name, username_forgot_username, email_forgot_username, config)
@@ -156,12 +155,7 @@ def log_and_reg():
                 else:
                     st.sidebar.error('Email not found')
             except Exception as e:
-                st.error(str(e))
+                st.sidebar.error(str(e))
 
     return config, authenticator, name, authentication_status, username
 
-
-
-# TODO wyslij email potwierdzajacy rejestracje
-# TODO dodaj jakąś walidację przy rejestracji logowaniu
-# TODO gdy poda się nieprawidłową nazwę użytkownika ale dobry email, to pokazuje się komunikat "invalid username" ale email dodaje się do bazy, do naprawy to
