@@ -2,8 +2,10 @@ import sqlite3
 import os
 import streamlit as st
 
+
 def get_connection():
     return sqlite3.connect("number_plate_database.db")
+
 
 def get_cursor(con):
     return con.cursor()
@@ -39,7 +41,6 @@ def create_database():
         return get_connection(), get_cursor(get_connection())
         print("Database file already exists.")
 
-
 def add_post(username, content, bounding_box, number_plate, image_path, date):
     con, cur = create_database()
     xmin, ymin, xmax, ymax = bounding_box
@@ -47,9 +48,11 @@ def add_post(username, content, bounding_box, number_plate, image_path, date):
         cur.execute(
             f"INSERT INTO posts (username, text, xmin, ymin, xmax, ymax, number_plate, image_path, post_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (username, content, xmin, ymin, xmax, ymax, number_plate, image_path, date))
+        con.commit()
+        return True
     except sqlite3.IntegrityError:
         st.error("Number plate already exists in the database!")
-    con.commit()
+        return False
 
 
 def get_last_number_plate_data(number: int = 10):

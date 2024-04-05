@@ -30,11 +30,32 @@ def prepare_images(image_path):
 
 def preprocess_image_for_ocr(image):
     removed_noise_image = remove_noise(image)
-    gray = cv2.cvtColor(removed_noise_image, cv2.COLOR_BGR2GRAY)
+    contrast = increase_contrast(removed_noise_image)
+    gray = cv2.cvtColor(contrast, cv2.COLOR_BGR2GRAY)
     thresholded_image = thresholding(gray)
     # TODO - Implement deskewing
     # deskewed_image = deskew(thresholded_image)
     return thresholded_image
+
+
+def increase_contrast(img):
+    lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+    l_channel, a, b = cv2.split(lab)
+
+    # Applying CLAHE to L-channel
+    # feel free to try different values for the limit and grid size:
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    cl = clahe.apply(l_channel)
+
+    # merge the CLAHE enhanced L-channel with the a and b channel
+    limg = cv2.merge((cl, a, b))
+
+    # Converting image from LAB Color model to BGR color space
+    enhanced_img = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
+
+    # Stacking the original image with the enhanced image
+    result = np.hstack((img, enhanced_img))
+    return result
 
 
 def remove_noise(image):

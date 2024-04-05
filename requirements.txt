@@ -20,3 +20,4 @@ deskew
 streamlit
 streamlit_authenticator
 opencv-python-headless
+streamlit-scrollable-textbox
