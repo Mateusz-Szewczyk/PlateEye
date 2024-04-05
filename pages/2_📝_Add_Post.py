@@ -17,7 +17,7 @@ config, authenticator, name, authentication_status, username = log_and_reg()
 st.markdown("---")
 
 
-@st.cache()
+
 def get_image():
     return st.file_uploader("Upload an Image", type=["jpg", "jpeg", "png"])
 
